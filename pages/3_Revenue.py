@@ -87,19 +87,26 @@ if dimension == "Monthly (Pacing)":
         fig_donut = go.Figure(go.Pie(
             labels=["MTD Confirmed Actuals", "Remaining-Days Forecast"],
             values=[p["mtd_actual"], remain],
-            hole=0.55,
-            marker=dict(colors=["#444441", WARNING_COLOR]),
-            textinfo="label+percent",
+            hole=0.68,
+            marker=dict(colors=["#444441", WARNING_COLOR], line=dict(color="white", width=2)),
+            textinfo="percent",
+            textposition="outside",
+            textfont=dict(size=13),
             hovertemplate="%{label}<br>R$ %{value:,.0f} (%{percent})<extra></extra>",
         ))
         fig_donut.update_layout(
-            template="plotly_white", font=CHART_FONT, height=340,
-            annotations=[dict(
-                text=f"Projected revenue this month<br>R$ {p['projected_close']:,.0f}<br>{abs(delta):.1f}% {direction} vs. prior month",
-                x=0.5, y=0.5, font_size=14, showarrow=False,
-            )],
-            showlegend=True, legend=dict(orientation="h", y=-0.1, font=CHART_FONT),
-            margin=dict(l=10, r=10, t=10, b=10),
+            template="plotly_white", font=CHART_FONT, height=360,
+            annotations=[
+                dict(text="Projected revenue this month", x=0.5, y=0.60,
+                     font=dict(size=12, color="#5F5E5A"), showarrow=False),
+                dict(text=f"R$ {p['projected_close']:,.0f}", x=0.5, y=0.48,
+                     font=dict(size=19, color="#2C2C2A"), showarrow=False),
+                dict(text=f"{abs(delta):.1f}% {direction} vs. prior month", x=0.5, y=0.38,
+                     font=dict(size=11, color=("#1D9E75" if delta >= 0 else WARNING_COLOR)),
+                     showarrow=False),
+            ],
+            showlegend=True, legend=dict(orientation="h", y=-0.15, font=CHART_FONT),
+            margin=dict(l=40, r=40, t=30, b=30),
             hoverlabel=dict(font=dict(size=15)),
         )
         st.plotly_chart(fig_donut, width='stretch')
