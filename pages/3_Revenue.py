@@ -42,7 +42,7 @@ kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 with kpi1:
     kpi_card("Projected Revenue This Month", f"R$ {p['projected_close']:,.0f}", f"Range {p['lower_bound']:,.0f} - {p['upper_bound']:,.0f}")
 with kpi2:
-    kpi_card("MTD Confirmed Actuals", f"R$ {p['mtd_actual']:,.0f}", f"{int(p['days_elapsed'])} days elapsed / {int(p['days_remaining'])} days remaining")
+    kpi_card("Revenue So Far This Month", f"R$ {p['mtd_actual']:,.0f}", f"{int(p['days_elapsed'])} days elapsed / {int(p['days_remaining'])} days remaining")
 with kpi3:
     kpi_card("Revenue Growth vs. Prior Month", f"{p['vs_target_pct']:.1f}%", "Target is a placeholder based on the prior month's actuals")
 with kpi4:
@@ -85,7 +85,7 @@ if dimension == "Monthly (Pacing)":
         delta = p["vs_target_pct"] - 100
         direction = "up" if delta >= 0 else "down"
         fig_donut = go.Figure(go.Pie(
-            labels=["MTD Confirmed Actuals", "Remaining-Days Forecast"],
+            labels=["Revenue So Far This Month", "Remaining-Days Forecast"],
             values=[p["mtd_actual"], remain],
             hole=0.68,
             marker=dict(colors=["#444441", WARNING_COLOR], line=dict(color="white", width=2)),
