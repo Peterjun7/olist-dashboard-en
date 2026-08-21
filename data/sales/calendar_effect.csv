@@ -1,0 +1,5 @@
+label,revenue,group
+Weekday,29034.453432835824,Day of week
+Weekend,21333.12561728395,Day of week
+Normal,26768.445246800733,Holiday
+Holiday,19393.66375,Holiday

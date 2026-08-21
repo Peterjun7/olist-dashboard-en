@@ -1,0 +1,7 @@
+model,wmape_overall,WMAPE_h1~7,WMAPE_h8~31
+HGB_ratio,19.97,18.52,20.41
+expected,20.32,20.53,20.25
+HGB_global,21.99,18.95,22.93
+HGB_log,22.33,19.65,23.15
+snaive,23.93,20.31,25.05
+naive,27.13,24.23,28.02

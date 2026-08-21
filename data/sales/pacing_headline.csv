@@ -1,0 +1,2 @@
+as_of_date,days_elapsed,days_remaining,mtd_actual,remaining_forecast,projected_close,lower_bound,upper_bound,actual_close,error_rate_pct,verifiable,target,vs_target_pct
+2018-08-21,21,10,897590.4799999999,261039.29473354964,1158629.7747335494,1052437.7781608542,1264821.7713062447,,,False,1027807.28,112.72830979885154
