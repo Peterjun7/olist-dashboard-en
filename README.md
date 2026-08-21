@@ -1,21 +1,21 @@
-# Olist 대시보드
+# Olist Dashboard
 
-## 실행
+## Run
 ```bash
 cd olist_dashboard
 pip install -r requirements.txt
-streamlit run app.py
+streamlit run home.py
 ```
 
-## 데이터 채우기
-`EXPORT_CELLS.md`에 노트북 5개에 붙여넣을 export 셀이 정리되어 있습니다.
-각 노트북 맨 아래에 붙여넣고 실행하면 `data/` 하위에 CSV가 저장됩니다.
+## Populating the data
+`EXPORT_CELLS.md` has the export cells to paste into each of the 5 notebooks.
+Paste each one at the bottom of its notebook and run it — CSVs get written under `data/`.
 
-CSV가 없는 섹션은 화면에 안내만 뜨고 나머지는 정상 동작합니다.
+Any section without a CSV just shows a placeholder message; the rest of the app works normally.
 
-## 화면 구성
-각 화면 모두 문제정의 → 결과(진단) → 액션아이템 순서입니다.
+## Screens
+Every screen follows the same order: problem definition -> findings (diagnosis) -> action items.
 
-- **매출** — 월말 페이싱(헤드라인), 7일 예측+구간, 호라이즌별 성능, 피처중요도, 지역별
-- **고객** — 레이더/PCA/지도, 관여도와 재구매, 배송실망군, 바우처 효과
-- **상품·배송** — 퍼널 병목, 지역 격차, 카테고리 대조, 무게-지연, SLA 테이블
+- **Revenue** — month-end pacing (headline), 7-day forecast + interval, performance by horizon, feature importance, by region
+- **Customers** — radar/PCA/map, engagement vs. repeat purchase, Delivery-Disappointed segment, voucher effect
+- **Products & Delivery** — funnel bottlenecks, regional gaps, category comparison, weight vs. delay, SLA table
