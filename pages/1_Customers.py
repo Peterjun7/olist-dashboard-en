@@ -14,7 +14,16 @@ from utils.data_loader import load_csv, require_data, optional
 
 render_sidebar_footer()
 inject_kpi_style()
-st.title("Customers")
+
+st.markdown("""
+<style>
+div[data-testid="stMarkdown"] p strong { font-size: 1.2rem; }
+</style>
+""", unsafe_allow_html=True)
+
+CHART_FONT = {**CHART_FONT, "size": 15}
+
+st.title("Customer Clustering Dashboard for Repeat-Purchase Analysis")
 
 HINT_CL = "Run the export cell at the bottom of olist_customer_clustering_4.ipynb."
 HINT_FN = "Run the export cell at the bottom of olist_segment_funnel_retention.ipynb."
@@ -57,12 +66,12 @@ kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 with kpi1:
     kpi_card("Customers Analyzed", f"{total_customers:,}")
 with kpi2:
-    kpi_card("Repeat Purchase Rate", f"{repeat['repeat_rate_all'].mean():.2f}%")
+    kpi_card("Average Repeat Purchase Rate", f"{repeat['repeat_rate_all'].mean():.2f}%")
 with kpi3:
-    kpi_card("At-Risk Customers", f"{dis_n:,}",
-             f"Size of the Delivery-Disappointed segment (poor delivery experience). {dis_n/total_customers*100:.1f}% of total")
+    kpi_card("Customers With Severe Delivery Delays", f"{dis_n:,}",
+             f"{dis_n/total_customers*100:.1f}% of total")
 with kpi4:
-    kpi_card("Top-2 Segment Revenue Share", f"{top2:.1f}%",
+    kpi_card("Revenue Share of the Top 2 Highest-Revenue Segments", f"{top2:.1f}%",
              f"Combined revenue share of the top 2 of 5 segments ({top2_names})")
 
 st.divider()
@@ -166,7 +175,7 @@ with col_m:
                               hoverlabel=dict(font=dict(size=15)))
         st.plotly_chart(fig_map, width='stretch')
 
-        st.caption("Top cities by customer count (segment mix)")
+        st.markdown('<p style="font-size:1rem; color:gray;">Top cities by customer count (segment mix)</p>', unsafe_allow_html=True)
         city_seg = (
             plot_df.groupby(["customer_city", "Segment"]).size()
             .reset_index(name="customer_count")
@@ -245,7 +254,7 @@ satisfaction = optional("customer/satisfaction_monthly.csv")
 col_n, col_s = st.columns(2)
 
 with col_n:
-    st.caption("New customers per month")
+    st.markdown('<p style="font-size:1rem; color:gray;">New customers per month</p>', unsafe_allow_html=True)
     if new_cust is not None:
         new_cust["month"] = pd.to_datetime(new_cust["month"])
         fig_n = go.Figure()
@@ -262,7 +271,7 @@ with col_n:
         st.info(f"No data. {HINT_CL}")
 
 with col_s:
-    st.caption("Average satisfaction (mean review score) per month")
+    st.markdown('<p style="font-size:1rem; color:gray;">Average satisfaction (mean review score) per month</p>', unsafe_allow_html=True)
     if satisfaction is not None:
         satisfaction["month"] = pd.to_datetime(satisfaction["month"])
         fig_s = go.Figure()

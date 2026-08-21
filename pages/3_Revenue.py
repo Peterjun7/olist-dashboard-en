@@ -14,7 +14,7 @@ from utils.data_loader import load_csv, require_data, optional
 
 render_sidebar_footer()
 inject_kpi_style()
-st.title("Revenue")
+st.title("Revenue Forecast Dashboard")
 
 HINT_V2 = "Run the export cell at the bottom of olist_forecast_v2.ipynb."
 HINT_DS = "Run the export cell at the bottom of olist_daily_sales_forecasting.ipynb."
@@ -227,7 +227,7 @@ with col_c:
         st.info(f"No data. {HINT_V2}")
 
 with col_s:
-    st.caption("Seller revenue concentration (by decile)")
+    st.caption("How Much Revenue Do the Top Sellers Account For?")
     if seller_decile is not None:
         fig_sel = go.Figure()
         fig_sel.add_trace(go.Bar(
@@ -236,7 +236,7 @@ with col_s:
             hovertemplate="Top %{x} sellers<br>Revenue share: %{y:.1f}%<extra></extra>",
         ))
         fig_sel.update_layout(template="plotly_white", font=CHART_FONT, height=380,
-                               xaxis_title="Seller Tier (by revenue)", yaxis_title="Revenue Share (%)",
+                               xaxis_title="Seller Group (Top 10% Deciles by Revenue)", yaxis_title="Revenue Share (%)",
                                margin=dict(l=10, r=10, t=10, b=70),
                                hoverlabel=dict(font=dict(size=13)))
         st.plotly_chart(fig_sel, width='stretch')
@@ -244,7 +244,7 @@ with col_s:
         st.info(f"No data. {HINT_V2}")
 
 with col_r:
-    st.caption("Revenue by region")
+    st.caption("How Much Revenue Do the Top Cities Generate?")
     if region_rev is not None:
         top_region = region_rev.head(10)
         fig_reg = px.bar(top_region, x="customer_state", y="revenue",
@@ -264,12 +264,12 @@ with col_r:
 st.divider()
 
 # -- Calendar effects --
-st.markdown("**Calendar Effects**")
+st.markdown("**How Much Does Revenue Vary by Date?**")
 if calendar_effect is not None:
     col_w, col_h, col_bf = st.columns(3)
 
     with col_w:
-        st.caption("Day-of-week effect")
+        st.caption("Weekday vs. Weekend Revenue")
         sub = calendar_effect[calendar_effect["group"] == "Day of week"]
         fig_w = go.Figure()
         fig_w.add_trace(go.Bar(
@@ -284,7 +284,7 @@ if calendar_effect is not None:
         st.plotly_chart(fig_w, width='stretch')
 
     with col_h:
-        st.caption("Holiday effect")
+        st.caption("Regular Days vs. Holiday Revenue")
         sub = calendar_effect[calendar_effect["group"] == "Holiday"]
         fig_h = go.Figure()
         fig_h.add_trace(go.Bar(
@@ -299,7 +299,7 @@ if calendar_effect is not None:
         st.plotly_chart(fig_h, width='stretch')
 
     with col_bf:
-        st.caption("Black Friday effect")
+        st.caption("Regular Days vs. Black Friday Revenue")
         if bf_effect is not None:
             b = bf_effect.iloc[0]
             fig_bf = go.Figure()

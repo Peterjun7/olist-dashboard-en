@@ -14,7 +14,7 @@ from utils.data_loader import load_csv, require_data, optional
 
 render_sidebar_footer()
 inject_kpi_style()
-st.title("Products & Delivery")
+st.title("Delivery Delay Root-Cause Dashboard")
 
 HINT = "Run the export cell at the bottom of olist_segment_funnel_retention.ipynb."
 STAGE_LABELS = ["Purchased", "Approved", "Shipped", "Delivered"]
@@ -24,6 +24,10 @@ ORDER = SEG_ORDER
 
 sla = load_csv("delivery/sla_table_by_state.csv")
 require_data(sla, HINT)
+sla = sla.rename(columns={
+    "violation_rate_pct": "exceed_rate_pct",
+    "p80_days": "time_to_80pct_delivered",
+})
 
 seg_reach = optional("delivery/seg_funnel_reach.csv")
 seg_days = optional("delivery/seg_stage_days.csv")
@@ -42,17 +46,17 @@ kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 with kpi1:
     kpi_card("Overall Delivery Completion Rate", "97.02%", "96,478 of 99,441 orders delivered")
 with kpi2:
-    kpi_card("Average Delivery Time", "12.56 days", "Median 10.22 days / P80 17.44 days")
+    kpi_card("Average Delivery Time", "12.56 days", "Median 10.22 days / Time by which 80% of orders are delivered: 17.44 days")
 with kpi3:
     kpi_card("Max Regional Delivery-Time Gap", "3.0x", "SP 8.76 days ↔ AM 26.43 days")
 with kpi4:
     kpi_card("Estimated-Delivery-Date Miss Rate", "8.11%",
-             "Share of orders that arrived later than the promised order_estimated_delivery_date")
+             "Share of orders that arrived later than the promised delivery date")
 
 st.divider()
 
 # -- Dimension selector (applies to both reach and days panels) --
-st.markdown("**Choose a Dimension**")
+st.markdown("**Where does delivery delay get worse?**")
 dimension = st.radio(
     "Dimension", ["By Segment", "By Category", "By Product Volume", "By Customer Region"],
     horizontal=True, label_visibility="collapsed",
@@ -241,7 +245,7 @@ else:
 st.divider()
 
 # -- Weight/volume by seller-delay-share group --
-st.markdown("**Average Weight & Volume by Seller-Delay-Share Group**")
+st.markdown("**Heavier, bulkier products shift more of the delivery time onto the seller rather than the carrier**")
 if weight_delay is not None:
     fig_h = go.Figure()
     fig_h.add_trace(go.Bar(x=weight_delay["ratio_group"], y=weight_delay["avg_weight_g"],
@@ -267,14 +271,14 @@ else:
 st.divider()
 
 # -- Reference table: estimated-delivery-date miss rate by region --
-st.markdown("**Reference Table: Estimated-Delivery-Date Miss Rate by Region**")
+st.markdown("**Estimated-Delivery-Date Miss Rate by Region**")
 
 med_days = sla["avg_days"].median()
-med_viol = sla["violation_rate_pct"].median()
+med_viol = sla["exceed_rate_pct"].median()
 
 def classify(row):
     slow = row["avg_days"] > med_days
-    high = row["violation_rate_pct"] > med_viol
+    high = row["exceed_rate_pct"] > med_viol
     if slow and not high:
         return "Slow delivery · Good ETA reliability"
     if not slow and high:
@@ -291,9 +295,9 @@ type_colors = {
     "Fast delivery · Good ETA reliability": "#B4B2A9",
 }
 
-fig_i = px.scatter(sla, x="avg_days", y="violation_rate_pct", size="order_count",
+fig_i = px.scatter(sla, x="avg_days", y="exceed_rate_pct", size="order_count",
                     color="type", color_discrete_map=type_colors,
-                    text="customer_state", hover_data=["p80_days", "order_count"],
+                    text="customer_state", hover_data=["time_to_80pct_delivered", "order_count"],
                     size_max=70)
 fig_i.update_traces(marker=dict(sizemin=10, line=dict(width=0.5, color="white")),
                      textfont=dict(size=13))
@@ -308,8 +312,8 @@ st.plotly_chart(fig_i, width='stretch')
 
 tf = st.multiselect("Filter by type", sla["type"].unique().tolist(),
                      default=sla["type"].unique().tolist())
-disp = sla[sla["type"].isin(tf)].sort_values("violation_rate_pct", ascending=False)
-st.dataframe(disp[["customer_state", "avg_days", "p80_days", "violation_rate_pct", "order_count", "type"]],
+disp = sla[sla["type"].isin(tf)].sort_values("exceed_rate_pct", ascending=False)
+st.dataframe(disp[["customer_state", "avg_days", "time_to_80pct_delivered", "exceed_rate_pct", "order_count", "type"]],
              width='stretch', hide_index=True)
 st.download_button("Download CSV", disp.to_csv(index=False).encode("utf-8-sig"),
                     "sla_table.csv", "text/csv")
